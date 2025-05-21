@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RBAC Demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <header class="bg-white shadow rounded-lg p-6 mb-8">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">RBAC Demo Application</h1>
+        <div class="flex items-center space-x-4">
+          <% if (username) { %>
+            <span class="text-gray-600">Welcome, <%= username %></span>
+            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+              <%= roles.join(', ') %>
+            </span>
+            <a href="/logout" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Logout</a>
+          <% } else { %>
+            <a href="/login" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Login</a>
+          <% } %>
+        </div>
+      </div>
+    </header>
+
+    <% if (error) { %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <%= error %>
+      </div>
+    <% } %>
+
+    <% if (username) { %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white shadow rounded-lg p-6">
+          <h2 class="text-xl font-semibold mb-4">Service 1 Operations</h2>
+          <div class="space-y-4">
+            <button onclick="callService('service1', 'operation1')" class="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+              Operation 1
+            </button>
+            <button onclick="callService('service1', 'operation2')" class="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+              Operation 2
+            </button>
+            <button onclick="callService('service1', 'operation3')" class="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+              Operation 3
+            </button>
+            <button onclick="callService('service1', 'callService2')" class="w-full px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+              Call Service 2
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white shadow rounded-lg p-6">
+          <h2 class="text-xl font-semibold mb-4">Service 2 Operations</h2>
+          <div class="space-y-4">
+            <button onclick="callService('service2', 'operation1')" class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              Operation 1
+            </button>
+            <button onclick="callService('service2', 'operation2')" class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              Operation 2
+            </button>
+            <button onclick="callService('service2', 'operation3')" class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              Operation 3
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <% if (roles.includes('admin')) { %>
+        <div class="bg-white shadow rounded-lg p-6 mb-8">
+          <h2 class="text-xl font-semibold mb-4">Admin Operations</h2>
+          <button onclick="window.location.href='/admin'" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">
+            Admin Panel
+          </button>
+        </div>
+      <% } %>
+
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Response</h2>
+        <pre id="response" class="bg-gray-100 p-4 rounded-lg min-h-[100px] whitespace-pre-wrap"></pre>
+      </div>
+    <% } else { %>
+      <div class="bg-white shadow rounded-lg p-6 text-center">
+        <p class="text-lg mb-4">Please log in to access the services.</p>
+        <a href="/login" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Login</a>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    async function callService(service, operation) {
+      try {
+        document.getElementById('response').textContent = 'Loading...';
+        const response = await fetch(`/api/${service}/${operation}`);
+        const data = await response.json();
+        document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('response').textContent = 'Error: ' + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
