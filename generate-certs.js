@@ -20,7 +20,7 @@ directories.forEach((dir) => {
 
   // Generate certificate signing request
   execSync(
-    `openssl req -new -key ${dir}/key.pem -out ${dir}/csr.pem -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"`,
+    `openssl req -new -key ${dir}/key.pem -out ${dir}/csr.pem -subj "/C=PT/ST=Portugal/L=Porto/O=FEUP/OU=SSI/CN=group4"`,
   )
 
   // Generate self-signed certificate
